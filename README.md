@@ -42,3 +42,19 @@ add,
     }
   ]
 
+wrangler d1 execute mediathief_db --remote --command "
+CREATE TABLE IF NOT EXISTS mutes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    telegram_id TEXT UNIQUE,
+    mute_until TEXT
+);
+CREATE TABLE IF NOT EXISTS warnings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    telegram_id TEXT,
+    moderator_id TEXT,
+    reason TEXT,
+    issued_at TEXT
+);
+"
+
+added warnings and mute

@@ -6,7 +6,7 @@ export default async function handleHelp(message, env) {
 
   try {
     const user = await getUser(env.DB, chatId);
-    const isAdmin = user?.role === "admin";
+    const role = user?.role || "user"; // Default role is "user"
 
     let helpMessage = `
 🤖 *Bot Commands Guide*  
@@ -16,11 +16,27 @@ export default async function handleHelp(message, env) {
 /help - Show this list of commands.  
     `;
 
-    if (isAdmin) {
-      helpMessage += `/stats - View bot statistics (Admins only).`;
+    if (role === "moderator" || role === "admin") {
+      helpMessage += `
+🔧 *Moderator Commands*  
+---------------------
+/mute @username [minutes] - Temporarily mute a user.  
+/unmute @username - Unmute a user.  
+/warn @username [reason] - Issue a warning.  
+      `;
     }
 
-    helpMessage += `\n\n🔹 More commands will be added soon! Stay tuned.`;
+    if (role === "admin") {
+      helpMessage += `
+🛠 *Admin Commands*  
+---------------------
+/stats - View bot statistics.  
+/broadcast <message> - Send a message to all users.  
+/setrole @username role - Assign a role (admin, moderator, user).  
+      `;
+    }
+
+    helpMessage += `\n🔹 More commands will be added soon! Stay tuned.`;
 
     await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, helpMessage, { parse_mode: "Markdown" });
 
