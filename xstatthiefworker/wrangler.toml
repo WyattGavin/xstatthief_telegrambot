@@ -1,0 +1,8 @@
+name = "xstatthiefworker"
+main = "src/index.js"  # Ensure this matches your file path
+compatibility_date = "2024-02-20"
+
+[[ d1_databases ]]
+binding = "DB"
+database_name = "mediathief_db"
+database_id = "1e0bf363-96a3-4845-9fbb-c7a3af7b090b"
