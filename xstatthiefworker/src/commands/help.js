@@ -23,6 +23,7 @@ export default async function handleHelp(message, env) {
 /mute @username [minutes] - Temporarily mute a user.  
 /unmute @username - Unmute a user.  
 /warn @username [reason] - Issue a warning.  
+/dm @username message - Send a private message.  
       `;
     }
 

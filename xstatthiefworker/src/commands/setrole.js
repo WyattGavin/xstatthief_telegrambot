@@ -13,10 +13,19 @@ export default async function handleSetRole(message, env) {
   const username = args[0].replace("@", ""); // Remove '@' if mentioned
   const newRole = args[1].toLowerCase();
 
+  if (!["admin", "moderator", "user"].includes(newRole)) {
+    return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, "❌ Invalid role. Use: admin, moderator, or user.");
+  }
+
   try {
     const sender = await getUser(env.DB, chatId);
-    if (!sender || sender.role !== "admin") {
-      return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, "❌ You do not have permission to change roles.");
+    if (!sender) {
+      return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, "❌ You are not registered. Send /start first.");
+    }
+
+    // Moderators can only change "user" ↔ "moderator" roles
+    if (sender.role === "moderator" && newRole === "admin") {
+      return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, "❌ Moderators cannot assign admin roles.");
     }
 
     const targetUser = await getUserByUsername(env.DB, username);
@@ -24,8 +33,9 @@ export default async function handleSetRole(message, env) {
       return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, `❌ User @${username} not found.`);
     }
 
-    if (targetUser.role === "admin" && newRole !== "admin") {
-      return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, "⚠️ You cannot demote another admin.");
+    // Prevent moderators from modifying admins
+    if (sender.role === "moderator" && targetUser.role === "admin") {
+      return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, "❌ You cannot change an admin's role.");
     }
 
     await updateUserRole(env.DB, username, newRole);
@@ -34,7 +44,7 @@ export default async function handleSetRole(message, env) {
     await sendMessage(env.TELEGRAM_BOT_TOKEN, targetUser.telegram_id, `🎉 Congratulations, @${username}! You are now a *${newRole}*.`);
 
     return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, `✅ User @${username} is now a ${newRole}.`);
-    
+
   } catch (error) {
     return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, `Error: ${error.message}`);
   }

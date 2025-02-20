@@ -7,6 +7,7 @@ import handleSetRole from "./commands/setrole.js";
 import handleMute from "./commands/mute.js";
 import handleUnmute from "./commands/unmute.js";
 import handleWarn from "./commands/warn.js";
+import handleDM from "./commands/dm.js";
 import handleDefault from "./commands/default.js";
 
 export default {
@@ -42,6 +43,8 @@ export default {
         return await handleUnmute(message, env);
       } else if (text.startsWith("/warn")) {
         return await handleWarn(message, env);
+      } else if (text.startsWith("/dm")) {
+        return await handleDM(message, env);
       } else {
         return await handleDefault(message, env);
       }
