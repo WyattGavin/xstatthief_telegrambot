@@ -1,4 +1,5 @@
 import handleStart from "./commands/start.js";
+import handleProfile from "./commands/profile.js";
 import handleDefault from "./commands/default.js";
 
 export default {
@@ -18,6 +19,8 @@ export default {
 
       if (text.startsWith("/start")) {
         return await handleStart(message, env);
+      } else if (text.startsWith("/profile")) {
+        return await handleProfile(message, env);
       } else {
         return await handleDefault(message, env);
       }
