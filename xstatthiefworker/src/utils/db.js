@@ -18,3 +18,7 @@ export async function getUser(db, telegramId) {
     return stmt.bind(telegramId, username, firstName, lastName, language, dateJoined, role).run();
   }
   
+  export async function updateUserRole(db, telegramId, newRole) {
+    const stmt = db.prepare(`UPDATE users SET role = ? WHERE telegram_id = ?;`);
+    return stmt.bind(newRole, telegramId).run();
+  }
