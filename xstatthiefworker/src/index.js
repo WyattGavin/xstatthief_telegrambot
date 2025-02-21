@@ -9,6 +9,7 @@ import handleUnmute from "./commands/unmute.js";
 import handleWarn from "./commands/warn.js";
 import handleDM from "./commands/dm.js";
 import handleShadowban from "./commands/shadowban.js";
+import handleClear from "./commands/clear.js";
 import handleDefault from "./commands/default.js";
 
 export default {
@@ -37,7 +38,8 @@ export default {
       if (text.startsWith("/warn")) return handleWarn(message, env);
       if (text.startsWith("/dm")) return handleDM(message, env);
       if (text.startsWith("/shadowban")) return handleShadowban(message, env);
-      
+      if (text.startsWith("/clear")) return handleClear(message, env);
+
       return handleDefault(message, env);
     } catch (error) {
       return new Response(`Error: ${error.message}`, { status: 500 });
