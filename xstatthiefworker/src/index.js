@@ -8,6 +8,7 @@ import handleMute from "./commands/mute.js";
 import handleUnmute from "./commands/unmute.js";
 import handleWarn from "./commands/warn.js";
 import handleDM from "./commands/dm.js";
+import handleShadowban from "./commands/shadowban.js";
 import handleDefault from "./commands/default.js";
 
 export default {
@@ -25,29 +26,19 @@ export default {
         return new Response("Invalid request", { status: 400 });
       }
 
-      if (text.startsWith("/start")) {
-        return await handleStart(message, env);
-      } else if (text.startsWith("/profile")) {
-        return await handleProfile(message, env);
-      } else if (text.startsWith("/help")) {
-        return await handleHelp(message, env);
-      } else if (text.startsWith("/stats")) {
-        return await handleStats(message, env);
-      } else if (text.startsWith("/broadcast")) {
-        return await handleBroadcast(message, env);
-      } else if (text.startsWith("/setrole")) {
-        return await handleSetRole(message, env);
-      } else if (text.startsWith("/mute")) {
-        return await handleMute(message, env);
-      } else if (text.startsWith("/unmute")) {
-        return await handleUnmute(message, env);
-      } else if (text.startsWith("/warn")) {
-        return await handleWarn(message, env);
-      } else if (text.startsWith("/dm")) {
-        return await handleDM(message, env);
-      } else {
-        return await handleDefault(message, env);
-      }
+      if (text.startsWith("/start")) return handleStart(message, env);
+      if (text.startsWith("/profile")) return handleProfile(message, env);
+      if (text.startsWith("/help")) return handleHelp(message, env);
+      if (text.startsWith("/stats")) return handleStats(message, env);
+      if (text.startsWith("/broadcast")) return handleBroadcast(message, env);
+      if (text.startsWith("/setrole")) return handleSetRole(message, env);
+      if (text.startsWith("/mute")) return handleMute(message, env);
+      if (text.startsWith("/unmute")) return handleUnmute(message, env);
+      if (text.startsWith("/warn")) return handleWarn(message, env);
+      if (text.startsWith("/dm")) return handleDM(message, env);
+      if (text.startsWith("/shadowban")) return handleShadowban(message, env);
+      
+      return handleDefault(message, env);
     } catch (error) {
       return new Response(`Error: ${error.message}`, { status: 500 });
     }

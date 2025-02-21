@@ -14,6 +14,8 @@ export default async function handleHelp(message, env) {
 /start - Register or say hi if you're already registered.  
 /profile - View your saved profile information.  
 /help - Show this list of commands.  
+/dm @username message - Send a private message.  
+/shadowban @username - Check if a user is shadow-banned on X.  
     `;
 
     if (role === "moderator" || role === "admin") {
@@ -23,7 +25,6 @@ export default async function handleHelp(message, env) {
 /mute @username [minutes] - Temporarily mute a user.  
 /unmute @username - Unmute a user.  
 /warn @username [reason] - Issue a warning.  
-/dm @username message - Send a private message.  
       `;
     }
 
