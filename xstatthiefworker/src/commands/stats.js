@@ -1,43 +1,34 @@
 import { sendMessage } from "../utils/sendMessage.js";
-import { getUser } from "../utils/db.js";
 
 export default async function handleStats(message, env) {
   const chatId = message.chat.id;
 
   try {
-    const user = await getUser(env.DB, chatId);
+    // ✅ Get total users from the database
+    const userCount = await env.DB.prepare("SELECT COUNT(*) AS count FROM users").first("count");
 
-    if (!user) {
-      return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, "You are not registered. Send /start first.");
-    }
+    // ✅ Get total muted users
+    const mutedCount = await env.DB.prepare("SELECT COUNT(*) AS count FROM mutes").first("count");
 
-    if (user.role !== "admin") {
-      return await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, "❌ You do not have permission to use this command.");
-    }
+    // ✅ Get total warnings issued
+    const warningCount = await env.DB.prepare("SELECT COUNT(*) AS count FROM warnings").first("count");
 
-    // Get total user count and language distribution
-    const totalUsersQuery = env.DB.prepare("SELECT COUNT(*) AS count FROM users;");
-    const { results: totalUsersResult } = await totalUsersQuery.all();
-    const totalUsers = totalUsersResult[0]?.count || 0;
+    const botVersion = await env.DB.prepare("SELECT version FROM bot_version ORDER BY id DESC LIMIT 1").first("version");
 
-    const languageQuery = env.DB.prepare("SELECT language, COUNT(*) AS count FROM users GROUP BY language;");
-    const { results: languageResults } = await languageQuery.all();
-
-    let languageStats = "🌍 *Language Distribution:*\n";
-    languageResults.forEach(row => {
-      languageStats += `- ${row.language.toUpperCase()}: ${row.count} users\n`;
-    });
-
+    // ✅ Format stats message
     const statsMessage = `
 📊 *Bot Statistics*  
 ---------------------
-👥 *Total Users:* ${totalUsers}  
-${languageStats}
+👥 Total Users: ${userCount}  
+🔇 Muted Users: ${mutedCount}  
+⚠️ Warnings Issued: ${warningCount}  
+🤖 Bot Version: ${botVersion || "Unknown"}  
+
     `;
 
-    await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, statsMessage, { parse_mode: "Markdown" });
+    await sendMessage(env.TELEGRAM_BOT_TOKEN, chatId, statsMessage, "Markdown");
 
-    return new Response("Stats sent", { status: 200 });
+    return new Response("Stats message sent", { status: 200 });
 
   } catch (error) {
     return new Response(`Error: ${error.message}`, { status: 500 });

@@ -10,6 +10,8 @@ import handleWarn from "./commands/warn.js";
 import handleDM from "./commands/dm.js";
 import handleShadowban from "./commands/shadowban.js";
 import handleClear from "./commands/clear.js";
+import handleDeleteAccount from "./commands/deleteaccount.js";
+import handleDeleteUser from "./commands/deleteuser.js"; 
 import handleDefault from "./commands/default.js";
 
 export default {
@@ -21,27 +23,41 @@ export default {
     try {
       const update = await request.json();
       const message = update?.message;
-      const text = message?.text;
+      const text = message?.text?.trim();
 
       if (!message || !text) {
         return new Response("Invalid request", { status: 400 });
       }
 
-      if (text.startsWith("/start")) return handleStart(message, env);
-      if (text.startsWith("/profile")) return handleProfile(message, env);
-      if (text.startsWith("/help")) return handleHelp(message, env);
-      if (text.startsWith("/stats")) return handleStats(message, env);
-      if (text.startsWith("/broadcast")) return handleBroadcast(message, env);
-      if (text.startsWith("/setrole")) return handleSetRole(message, env);
-      if (text.startsWith("/mute")) return handleMute(message, env);
-      if (text.startsWith("/unmute")) return handleUnmute(message, env);
-      if (text.startsWith("/warn")) return handleWarn(message, env);
-      if (text.startsWith("/dm")) return handleDM(message, env);
-      if (text.startsWith("/shadowban")) return handleShadowban(message, env);
-      if (text.startsWith("/clear")) return handleClear(message, env);
+      // ✅ Command Mapping for Cleaner Handling
+      const commands = {
+        "/start": handleStart,
+        "/profile": handleProfile,
+        "/help": handleHelp,
+        "/stats": handleStats,
+        "/broadcast": handleBroadcast,
+        "/setrole": handleSetRole,
+        "/mute": handleMute,
+        "/unmute": handleUnmute,
+        "/warn": handleWarn,
+        "/dm": handleDM,
+        "/shadowban": handleShadowban,
+        "/clear": handleClear,
+        "/deleteaccount": handleDeleteAccount,
+        "/deleteuser": handleDeleteUser,
+      };
+
+      // ✅ Extract command (handles cases like `/command@botname`)
+      const command = text.split(" ")[0].split("@")[0];
+
+      if (commands[command]) {
+        return commands[command](message, env);
+      }
 
       return handleDefault(message, env);
+
     } catch (error) {
+      console.error("Bot Error:", error);
       return new Response(`Error: ${error.message}`, { status: 500 });
     }
   },

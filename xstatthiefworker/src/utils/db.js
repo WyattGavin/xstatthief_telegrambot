@@ -56,3 +56,24 @@ export async function updateUserRole(db, username, newRole) {
   const stmt = db.prepare(`UPDATE users SET role = ? WHERE username = ?;`);
   return stmt.bind(newRole, username).run();
 }
+
+export async function updateBotVersion(db) {
+  try {
+    let currentVersion = await db.prepare("SELECT version FROM bot_version ORDER BY id DESC LIMIT 1").first("version");
+
+    if (!currentVersion) {
+      currentVersion = "1.0.0";
+    }
+
+    let [major, minor, patch] = currentVersion.split(".");
+    patch = (parseInt(patch) + 1).toString();
+    const newVersion = `${major}.${minor}.${patch}`;
+
+    await db.prepare("INSERT INTO bot_version (version) VALUES (?)").bind(newVersion).run();
+
+    return newVersion;
+  } catch (error) {
+    console.error("Version Update Error:", error);
+    return "Unknown";
+  }
+}

@@ -18,7 +18,7 @@ export default async function handleHelp(message, env) {
 /help - Show this list of commands.  
 /dm @username message - Send a private message.  
 /shadowban @username - Check if a user is shadow-banned on X.  
-
+/deleteaccount - deletes account... :(
     `;
 
     if (role === "moderator" || role === "admin") {
@@ -39,6 +39,7 @@ export default async function handleHelp(message, env) {
 /stats - View bot statistics.  
 /broadcast <message> - Send a message to all users.  
 /setrole @username role - Assign a role (admin, moderator, user).  
+/deleteuser - deletes user.
       `;
     }
 
